@@ -1,0 +1,8 @@
+import { CreatePlanDto, ExerciseDto } from './create-plan.dto';
+declare const UpdatePlanDto_base: import("@nestjs/mapped-types").MappedType<Partial<CreatePlanDto>>;
+export declare class UpdatePlanDto extends UpdatePlanDto_base {
+}
+export declare class AddExercisesDto {
+    exercises: ExerciseDto[];
+}
+export {};

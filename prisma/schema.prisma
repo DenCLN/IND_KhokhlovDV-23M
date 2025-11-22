@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  firstName  String
+  lastName   String
+  email      String   @unique
+  phone      String?
+  dateOfBirth DateTime?
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Trainer {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  firstName      String
+  lastName       String
+  email          String   @unique
+  phone          String?
+  specialization String
+  experienceYears Int     @default(0)
+  about          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+type Exercise {
+  exerciseLibraryId String?  @db.ObjectId // Optional: ссылка на ExerciseLibrary
+  name        String
+  description String?
+  sets        Int?
+  reps        Int?
+  durationSec Int?
+}
+
+model TrainingPlan {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  description  String?
+  goal         String
+  difficulty   Difficulty
+  creatorId    String      @db.ObjectId // Trainer id
+  clientId     String?     @db.ObjectId // Optional: plan tailored to a specific client
+  exercises    Exercise[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+/// Справочник упражнений
+model ExerciseLibrary {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  description    String?
+  muscleGroup    String   // например: Грудь, Ноги, Спина, Плечи, Руки, Ягодицы, Пресс
+  photoUrl       String?
+  videoUrl       String?
+  techniqueUrl   String?  // ссылка на файл/док с техникой
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([muscleGroup])
+}
